@@ -16,9 +16,11 @@ app.get('/health', (req: Request, res: Response) => {
   res.json({ status: 'ok' });
 });
 
-// TODO: Add API routes here
-// app.use('/api/students', studentsRouter);
-// app.use('/api/scholarships', scholarshipsRouter);
+// API routes
+import studentsRouter from './routes/students';
+import scholarshipsRouter from './routes/scholarships';
+app.use('/api/students', studentsRouter);
+app.use('/api/scholarships', scholarshipsRouter);
 
 // Error handling middleware (must be last)
 app.use(errorHandler);
