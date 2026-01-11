@@ -40,3 +40,11 @@ Stored as PostgreSQL TEXT[] array (read-only reference data, simpler than juncti
 
 ### Database Migration Strategy
 Schema applied fresh using DROP TABLE IF EXISTS (take-home context). Production would need proper migration strategy.
+
+## API Implementation Assumptions
+
+### Student ID Generation
+IDs generated sequentially (stu_001, stu_002, etc.) by querying max existing ID. If no students exist, starts at stu_001. IDs extracted using SUBSTRING and CAST for numeric comparison.
+
+### Error Handling
+PostgreSQL error codes handled: 23xxx (unique violations) return 409 Conflict, 22xxx (data exceptions) return 400 Bad Request. Custom ValidationError class used for request validation (400 status). Generic errors return 500.

@@ -54,3 +54,21 @@ Empty arrays in JSON result in no rows in junction table (e.g., `fields_of_study
 
 **Rationale:** Empty array means "no restrictions". Query logic: No rows = no filter applied.
 
+## Step 2
+
+## API Infrastructure Design - project setup//core infrastructure
+
+### Express App Structure
+Single entry point (`src/index.ts`) with middleware pipeline. Error handler middleware mounted last to catch all errors. Health check endpoint for basic monitoring.
+
+**Rationale:** Simple, maintainable structure. Error handler last ensures all route errors are caught.
+
+### Error Handling Pattern
+Centralized error middleware with PostgreSQL error code detection (23xxx for conflicts, 22xxx for validation). Custom ValidationError class for request validation. JSON error responses with status codes.
+
+**Rationale:** Consistent error responses. PostgreSQL codes provide specific error types without parsing messages.
+
+### ID Generation Strategy
+Query database for max ID, parse numeric part, increment. SQL uses SUBSTRING and CAST for reliable numeric extraction. Handles empty table case (starts at stu_001).
+
+**Rationale:** Simple sequential generation. Database query ensures uniqueness without complex locking.
