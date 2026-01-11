@@ -28,4 +28,10 @@ Standardized string values for citizenship status ("US Citizen", "Permanent Resi
 - Email uniqueness enforced by database constraint (409 Conflict on duplicate)
 - Matching logic uses single comprehensive SQL query with EXISTS clauses for junction tables
 - Match reasons generated from required (non-NULL/empty) eligibility criteria only
-- Explanations use placeholder text until AI integration is implemented
+
+## OpenAI assumptions
+
+
+- AI explanations generated via OpenAI API (gpt-3.5-turbo model) when AI_PROVIDER=openai and OPENAI_API_KEY configured
+- Explanations fallback to error message if OpenAI API fails or is not configured
+- OpenAI service requires OPENAI_API_KEY environment variable (throws error if missing)

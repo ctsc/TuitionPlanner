@@ -46,3 +46,15 @@ Single comprehensive SQL query using EXISTS clauses for junction table checks. H
 Financial need calculated in application code (household_income < $50,000). Student IDs generated sequentially by querying max existing ID. Both stored in database for query performance.
 
 **Rationale:** Business logic in application code is easier to test and modify. Database stores results for efficient queries.
+
+## Stage 3: AI Integration Design
+
+### OpenAI Service Architecture
+Separate service class (`openaiService.ts`) for AI functionality. Service initializes OpenAI client with API key from environment. Error handling provides fallback behavior when API fails.
+
+**Rationale:** OpenAI is highest quality//most reliable -- even if it takes a few more minutes than the other options
+
+### Explanation Generation
+Personalized explanations generated via OpenAI gpt-3.5-turbo model. Prompt includes student attributes (GPA, major, demographics) and scholarship details. Responses limited to 2-3 sentences (150 tokens). Fallback to error message if API fails.
+
+**Rationale:** gpt-3.5-turbo balances quality and cost. Detailed prompts ensure personalized explanations. Error handling ensures API failures don't break endpoint.

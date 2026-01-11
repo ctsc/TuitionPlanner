@@ -1,27 +1,28 @@
 # Database Configuration
-# Format: postgresql://username:password@localhost:port/database_name
 # Extract username and password from this URL for PostgreSQL CLI tools (createdb, psql)
 DATABASE_URL=postgresql://username:password@localhost:5432/scholarships
 
-# Optional: PostgreSQL environment variables (alternative to using DATABASE_URL with CLI tools)
+# PostgreSQL environment variables (alternative to using DATABASE_URL with CLI tools)
 # Set these if you want to use createdb/psql commands without specifying -U flag
-# PGUSER=your_postgres_username
-# PGPASSWORD=your_postgres_password
 
-# For SQLite (simpler for testing):
-# DATABASE_URL=file:./dev.db
+PGUSER=your_postgres_username
+PGPASSWORD=your_postgres_password
+
+
 
 # Server Configuration
 PORT=3000
 NODE_ENV=development
 
+
 # AI Provider Selection (choose one)
 # Options: 'mock', 'openai', 'anthropic', 'huggingface'
-AI_PROVIDER=mock
+AI_PROVIDER=openai
 
-# OpenAI API Key 
+# OpenAI API Key (required if using OpenAI)
 # Get from: https://platform.openai.com/api-keys
-# OPENAI_API_KEY=sk-your-openai-key-here
+# See API-KEY-SETUP.md Option 2 for setup instructions
+OPENAI_API_KEY=sk-your-openai-key-here
 
 
 # Optional: Logging and Debug

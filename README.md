@@ -1,6 +1,6 @@
 # TuitionPlanner API
 
-Scholarship matching API that helps students find relevant funding opportunities based on their profile.
+A scholarship matching API that helps students find relevant funding opportunities based on their academic profile, demographics, and financial situation. The API matches students with eligible scholarships and provides personalized explanations for each match.
 
 ## Tech Stack
 
@@ -10,6 +10,8 @@ Scholarship matching API that helps students find relevant funding opportunities
 - **Runtime:** Node.js
 
 ## Setup Instructions
+
+> **💡 Quick Start:** For a fast setup guide, see [`QUICK-START.md`](QUICK-START.md)
 
 ### Prerequisites
 
@@ -27,13 +29,15 @@ Scholarship matching API that helps students find relevant funding opportunities
 
 2. **Set up environment variables:**
    - Copy `ENV-EXAMPLE.txt` to `.env` (or create `.env` manually)
-   - Configure your database connection:
+   - Configure your database connection and AI provider:
      ```env
      DATABASE_URL=postgresql://username:password@localhost:5432/scholarships
      PORT=3000
      NODE_ENV=development
-     AI_PROVIDER=mock
+     AI_PROVIDER=openai
+     OPENAI_API_KEY=sk-your-openai-key-here
      ```
+     **Note:** For AI explanations, set `AI_PROVIDER=openai` and add your `OPENAI_API_KEY`. See `API-KEY-SETUP.md` Option 2 for OpenAI setup instructions. If not configured, the API will return fallback messages for explanations.
 
 3. **Create and set up the database:**
 
@@ -92,12 +96,41 @@ Scholarship matching API that helps students find relevant funding opportunities
    ```
 
 7. **Verify the server is running:**
+   
+   **Windows PowerShell:**
+   ```powershell
+   Invoke-RestMethod -Uri http://localhost:3000/health
+   # Expected: {"status":"ok"}
+   ```
+   
+   **Linux/Mac (Bash):**
    ```bash
    curl http://localhost:3000/health
    # Expected: {"status":"ok"}
    ```
 
 8. **Test the API endpoints:**
+
+   **Windows PowerShell:**
+   ```powershell
+   # Create a student
+   $body = @{
+       name = "Test Student"
+       email = "test@example.com"
+       gpa = 3.5
+       enrollment_status = "high_school_senior"
+       citizenship_status = "US Citizen"
+   } | ConvertTo-Json
+   Invoke-RestMethod -Uri http://localhost:3000/api/students -Method POST -Body $body -ContentType "application/json"
+
+   # Get all scholarships
+   Invoke-RestMethod -Uri http://localhost:3000/api/scholarships -Method GET
+
+   # Get matches for a student (replace stu_001 with actual student ID from create response)
+   Invoke-RestMethod -Uri http://localhost:3000/api/students/stu_001/matches -Method GET
+   ```
+
+   **Linux/Mac (Bash) or Git Bash:**
    ```bash
    # Create a student
    curl -X POST http://localhost:3000/api/students \
@@ -196,7 +229,7 @@ Get matched scholarships for a student.
         "First-generation student status",
         "Financial need demonstrated"
       ],
-      "explanation": "Explanation pending - AI integration in progress"
+      "explanation": "The First Generation College Student Award is an excellent match for you. Your 3.6 GPA exceeds the 2.5 minimum requirement, and as a first-generation college student with demonstrated financial need, you embody this scholarship's mission. This $5,000 award from National Education Foundation could significantly support your educational goals."
     }
   ]
 }
@@ -209,10 +242,19 @@ Get matched scholarships for a student.
 - `500 Internal Server Error` - Server error
 
 ## Design Decisions
-For detailed design decisions, see `design.md`.
+For detailed design decisions, see `docs/design.md`.
 
 ## Assumptions
-For detailed assumptions, see `assumptions.md`.
+For detailed assumptions, see `docs/assumptions.md`.
+
+## Project Documentation
+
+All project documentation is located in the `docs/` directory:
+- **`docs/design.md`** - Detailed design decisions for database schema and API implementation
+- **`docs/assumptions.md`** - Project assumptions and data standards
+- **`docs/progress.md`** - Development progress tracking with time breakdown
+- **`docs/implementation-plan.md`** - API implementation plan and success criteria
+- **`docs/ai-integration-plan.md`** - AI integration implementation plan
 
 ## Time Breakdown
 
@@ -230,14 +272,26 @@ For detailed assumptions, see `assumptions.md`.
 - Status: ✅ Completed
 
 **Stage 3: AI Integration**
-- Status: ⏳ Not yet implemented (separate plan created: `ai-integration-plan.md`)
-- Current: Placeholder explanation text used ("Explanation pending - AI integration in progress")
+- Time: ~35 minutes
+- Status: ✅ Completed
+- Implementation: OpenAI API integration for personalized explanation generation
 
 ## AI Integration
 
-**Current Status:** Placeholder text is used for explanations. AI integration is planned as a separate step (see `ai-integration-plan.md` for details).
+**Implementation Status:** ✅ Complete
 
-**Planned Implementation:** OpenAI API integration (Option 2 from API-KEY-SETUP.md) using `gpt-3.5-turbo` model for personalized explanations.
+The API integrates with OpenAI's GPT-3.5-turbo model to generate personalized, 2-3 sentence explanations for why each scholarship matches a student. 
+
+**Configuration:**
+- Set `AI_PROVIDER=openai` in `.env`
+- Add your `OPENAI_API_KEY` to `.env` (see `API-KEY-SETUP.md` Option 2 for setup instructions)
+- When configured, explanations are generated automatically for each matched scholarship
+- Falls back gracefully if API key is missing or API requests fail
+
+**Features:**
+- Personalized explanations referencing specific student qualifications (GPA, major, demographics, financial need, etc.)
+- Comprehensive error handling (invalid keys, rate limits, network failures)
+- Fallback messages when AI service is unavailable or not configured
 
 ## Project Structure
 
@@ -255,35 +309,39 @@ tuitionplanner/
 │   │   ├── studentService.ts      # Student business logic
 │   │   ├── scholarshipService.ts  # Scholarship business logic
 │   │   └── matchingService.ts     # Matching logic
+│   ├── ai/
+│   │   └── openaiService.ts       # OpenAI service for explanation generation
 │   └── utils/
 │       ├── idGenerator.ts         # Student ID generation
 │       └── validation.ts          # Request validation helpers
 ├── schema.sql                      # Database schema (PostgreSQL)
 ├── package.json
 ├── tsconfig.json
-├── design.md                       # Detailed design decisions
-├── assumptions.md                  # Project assumptions
-├── progress.md                     # Development progress tracking
-├── implementation-plan.md          # API implementation plan
-└── ai-integration-plan.md          # AI integration plan (future)
+├── ENV-EXAMPLE.txt                 # Environment variables template
+├── docs/
+│   ├── design.md                   # Detailed design decisions
+│   ├── assumptions.md              # Project assumptions
+│   ├── progress.md                 # Development progress tracking
+│   ├── implementation-plan.md      # API implementation plan
+│   └── ai-integration-plan.md      # AI integration plan
 ```
 
 ## Known Limitations & Future Improvements
 
 ### Current Limitations:
-1. **AI Explanations:** Currently using placeholder text. AI integration planned as separate step.
-2. **No Pagination:** GET /api/scholarships returns all scholarships (fine for current dataset size).
-3. **No Filtering/Sorting:** Scholarships endpoint doesn't support filtering or sorting parameters.
-4. **No Authentication:** API endpoints are public (as per assignment requirements).
+1. **No Pagination:** GET /api/scholarships returns all scholarships (acceptable for current dataset size of 12 scholarships).
+2. **No Filtering/Sorting:** Scholarships endpoint doesn't support filtering or sorting parameters.
+3. **No Authentication:** API endpoints are public (as per assignment requirements).
+4. **AI Configuration Required:** OpenAI API key must be configured in `.env` for personalized explanations (falls back to error message if not configured).
 
 ### Future Improvements:
-1. **AI Integration:** Implement OpenAI API for personalized explanations (see `ai-integration-plan.md`).
-2. **Pagination:** Add pagination to scholarships endpoint for large datasets.
-3. **Caching:** Add caching layer for frequently accessed scholarships.
-4. **Rate Limiting:** Implement rate limiting for API endpoints.
-5. **Input Validation:** Enhance validation with more comprehensive checks.
-6. **Unit Tests:** Add comprehensive unit tests for matching logic and services.
-7. **API Documentation:** Generate OpenAPI/Swagger documentation.
+1. **Pagination:** Add pagination to scholarships endpoint for scalability with larger datasets.
+2. **Caching:** Implement caching layer for frequently accessed scholarships to improve performance.
+3. **Rate Limiting:** Add rate limiting for API endpoints to prevent abuse.
+4. **Enhanced Validation:** Expand input validation with more comprehensive field-level checks.
+5. **Unit Tests:** Add comprehensive unit tests for matching logic, services, and API endpoints.
+6. **API Documentation:** Generate OpenAPI/Swagger documentation for easier integration.
+7. **Multiple AI Providers:** Support additional AI providers (Anthropic, HuggingFace) with provider switching.
 
 
 ## Development
