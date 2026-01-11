@@ -1,0 +1,28 @@
+# Database Configuration
+DATABASE_URL=postgresql://username:password@localhost:5432/scholarships
+# For SQLite (simpler for testing):
+# DATABASE_URL=file:./dev.db
+
+# Server Configuration
+PORT=3000
+NODE_ENV=development
+
+# AI Provider Selection (choose one)
+# Options: 'mock', 'openai', 'anthropic', 'huggingface'
+AI_PROVIDER=mock
+
+# OpenAI API Key (if using OpenAI)
+# Get from: https://platform.openai.com/api-keys
+# OPENAI_API_KEY=sk-your-openai-key-here
+
+# Anthropic API Key (if using Anthropic Claude)
+# Get from: https://console.anthropic.com/
+# ANTHROPIC_API_KEY=sk-ant-your-anthropic-key-here
+
+# HuggingFace Token (if using HuggingFace)
+# Get from: https://huggingface.co/settings/tokens
+# HUGGINGFACE_TOKEN=hf_your-token-here
+
+# Optional: Logging and Debug
+LOG_LEVEL=info
+DEBUG=false
