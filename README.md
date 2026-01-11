@@ -39,110 +39,7 @@ A scholarship matching API that helps students find relevant funding opportuniti
      ```
      **Note:** For AI explanations, set `AI_PROVIDER=openai` and add your `OPENAI_API_KEY`. See `API-KEY-SETUP.md` Option 2 for OpenAI setup instructions. If not configured, the API will return fallback messages for explanations.
 
-3. **Create and set up the database:**
 
-   Extract the username and password from your `DATABASE_URL` in `.env` (format: `postgresql://username:password@localhost:5432/scholarships`).
-
-   **Windows PowerShell:**
-   ```powershell
-   # Set password from your DATABASE_URL (replace with your actual password)
-   $env:PGPASSWORD = "your_password"
-   
-   # Create database (replace 'your_username' with username from DATABASE_URL)
-   createdb -U your_username scholarships
-   
-   # Run schema to create database structure
-   psql -U your_username -d scholarships -f schema.sql
-   ```
-
-   **Linux/Mac (Bash):**
-   ```bash
-   # Set password from your DATABASE_URL (replace with your actual password)
-   export PGPASSWORD="your_password"
-   
-   # Create database (replace 'your_username' with username from DATABASE_URL)
-   createdb -U your_username scholarships
-   
-   # Run schema to create database structure
-   psql -U your_username -d scholarships -f schema.sql
-   ```
-
-   **Alternative (prompt for password):**
-   ```bash
-   # Will prompt for password when run
-   createdb -U your_username scholarships
-   psql -U your_username -d scholarships -f schema.sql
-   ```
-
-   **Note:** Replace `your_username` and `your_password` with the actual values from your `DATABASE_URL` in `.env`. The `schema.sql` file creates all necessary tables, indexes, and constraints.
-
-4. **Load sample data (optional):**
-   - Sample data files are available for reference but not automatically loaded
-   - Use the API endpoints to create students and load scholarship data
-   - See the API documentation below for endpoint usage
-
-5. **Build the project:**
-   ```bash
-   npm run build
-   ```
-
-6. **Run the server:**
-   ```bash
-   # Development mode (with ts-node)
-   npm run dev
-   
-   # Production mode
-   npm start
-   ```
-
-7. **Verify the server is running:**
-   
-   **Windows PowerShell:**
-   ```powershell
-   Invoke-RestMethod -Uri http://localhost:3000/health
-   # Expected: {"status":"ok"}
-   ```
-   
-   **Linux/Mac (Bash):**
-   ```bash
-   curl http://localhost:3000/health
-   # Expected: {"status":"ok"}
-   ```
-
-8. **Test the API endpoints:**
-
-   **Windows PowerShell:**
-   ```powershell
-   # Create a student
-   $body = @{
-       name = "Test Student"
-       email = "test@example.com"
-       gpa = 3.5
-       enrollment_status = "high_school_senior"
-       citizenship_status = "US Citizen"
-   } | ConvertTo-Json
-   Invoke-RestMethod -Uri http://localhost:3000/api/students -Method POST -Body $body -ContentType "application/json"
-
-   # Get all scholarships
-   Invoke-RestMethod -Uri http://localhost:3000/api/scholarships -Method GET
-
-   # Get matches for a student (replace stu_001 with actual student ID from create response)
-   Invoke-RestMethod -Uri http://localhost:3000/api/students/stu_001/matches -Method GET
-   ```
-
-   **Linux/Mac (Bash) or Git Bash:**
-   ```bash
-   # Create a student
-   curl -X POST http://localhost:3000/api/students \
-     -H "Content-Type: application/json" \
-     -d '{"name":"Test Student","email":"test@example.com","gpa":3.5,"enrollment_status":"high_school_senior","citizenship_status":"US Citizen"}'
-
-   # Get all scholarships
-   curl http://localhost:3000/api/scholarships
-
-   # Get matches for a student (replace stu_001 with actual student ID)
-   curl http://localhost:3000/api/students/stu_001/matches
-   ```
 
 ## API Endpoints
 
@@ -253,8 +150,6 @@ All project documentation is located in the `docs/` directory:
 - **`docs/design.md`** - Detailed design decisions for database schema and API implementation
 - **`docs/assumptions.md`** - Project assumptions and data standards
 - **`docs/progress.md`** - Development progress tracking with time breakdown
-- **`docs/implementation-plan.md`** - API implementation plan and success criteria
-- **`docs/ai-integration-plan.md`** - AI integration implementation plan
 
 ## Time Breakdown
 
@@ -264,17 +159,17 @@ All project documentation is located in the `docs/` directory:
 
 **Stage 2: API Implementation**
 - Step 1-2: Project Setup and Core Infrastructure - ~35 minutes
-- Step 3: POST /api/students Endpoint - ~22 minutes
+- Step 3: POST /api/students Endpoint - ~25 minutes
 - Step 4: GET /api/scholarships Endpoint - ~15 minutes
 - Step 5: Matching Logic Implementation - ~35 minutes
 - Step 6: GET /api/students/:id/matches Endpoint - ~35 minutes
-- **Total Stage 2:** ~142 minutes (~2.4 hours)
+- **Total Stage 2:** ~ (~2.5 hours)
 - Status: ✅ Completed
 
 **Stage 3: AI Integration**
-- Time: ~35 minutes
+- Time: ~45 minutes
 - Status: ✅ Completed
-- Implementation: OpenAI API integration for personalized explanation generation
+- Implementation: Uses OpenAI API integration for personalized explanation generation
 
 ## AI Integration
 
@@ -322,8 +217,6 @@ tuitionplanner/
 │   ├── design.md                   # Detailed design decisions
 │   ├── assumptions.md              # Project assumptions
 │   ├── progress.md                 # Development progress tracking
-│   ├── implementation-plan.md      # API implementation plan
-│   └── ai-integration-plan.md      # AI integration plan
 ```
 
 ## Known Limitations & Future Improvements
@@ -339,7 +232,7 @@ tuitionplanner/
 2. **Caching:** Implement caching layer for frequently accessed scholarships to improve performance.
 3. **Rate Limiting:** Add rate limiting for API endpoints to prevent abuse.
 4. **Enhanced Validation:** Expand input validation with more comprehensive field-level checks.
-5. **Unit Tests:** Add comprehensive unit tests for matching logic, services, and API endpoints.
+5. **Tests:** Add even further comprehensive tests for matching logic, services, and API endpoints.
 6. **API Documentation:** Generate OpenAPI/Swagger documentation for easier integration.
 7. **Multiple AI Providers:** Support additional AI providers (Anthropic, HuggingFace) with provider switching.
 
